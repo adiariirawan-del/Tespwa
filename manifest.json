@@ -1,48 +1,23 @@
 {
-    "name": "DataSaver Browser - YouTube & Google",
-    "short_name": "DataSaverBrowser",
-    "description": "Browser hemat data untuk YouTube dan Google dengan performa optimal",
+    "name": "YouTube Hemat Data",
+    "short_name": "YT Hemat",
+    "description": "Aplikasi untuk menonton YouTube dengan kuota lebih hemat",
     "start_url": "/",
     "display": "standalone",
-    "theme_color": "#2E7D32",
     "background_color": "#ffffff",
-    "orientation": "portrait",
+    "theme_color": "#ff0000",
+    "orientation": "portrait-primary",
     "icons": [
         {
-            "src": "icons/icon-72x72.png",
-            "sizes": "72x72",
-            "type": "image/png"
-        },
-        {
-            "src": "icons/icon-96x96.png",
-            "sizes": "96x96",
-            "type": "image/png"
-        },
-        {
-            "src": "icons/icon-128x128.png",
-            "sizes": "128x128",
-            "type": "image/png"
-        },
-        {
-            "src": "icons/icon-144x144.png",
-            "sizes": "144x144",
-            "type": "image/png"
-        },
-        {
-            "src": "icons/icon-192x192.png",
+            "src": "icons/icon-192.png",
             "sizes": "192x192",
             "type": "image/png"
         },
         {
-            "src": "icons/icon-384x384.png",
-            "sizes": "384x384",
-            "type": "image/png"
-        },
-        {
-            "src": "icons/icon-512x512.png",
+            "src": "icons/icon-512.png",
             "sizes": "512x512",
             "type": "image/png"
         }
     ],
-    "categories": ["entertainment", "productivity", "utilities"]
+    "categories": ["entertainment", "utilities"]
 }
