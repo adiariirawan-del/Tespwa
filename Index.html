@@ -23,19 +23,20 @@
 
         <div class="quality-selector">
             <label>Kualitas Video:</label>
-            <select id="quality">
-                <option value="144p">144p (Paling Hemat)</option>
-                <option value="240p">240p (Hemat)</option>
-                <option value="360p">360p (Standar)</option>
-                <option value="480p">480p (Sedang)</option>
-                <option value="720p">720p (HD)</option>
+            <select id="quality" onchange="changeQuality()">
+                <option value="144">144p (Paling Hemat)</option>
+                <option value="240">240p (Hemat)</option>
+                <option value="360" selected>360p (Standar)</option>
+                <option value="480">480p (Sedang)</option>
+                <option value="720">720p (HD)</option>
             </select>
         </div>
 
         <div id="playerContainer" class="player-container hidden">
-            <div id="player"></div>
+            <!-- Gunakan iframe langsung tanpa API kompleks -->
+            <div id="videoFrame"></div>
             <div class="video-info">
-                <h3 id="videoTitle"></h3>
+                <h3 id="videoTitle">Video YouTube</h3>
                 <div class="data-saving">
                     <span>💾 Mode Hemat Data: <span id="dataMode">Aktif</span></span>
                     <button onclick="toggleDataSaver()" id="dataSaverBtn">Hemat Data: ON</button>
@@ -47,8 +48,8 @@
             <h3>💡 Tips Hemat Data:</h3>
             <ul>
                 <li>Gunakan kualitas 144p/240p untuk menghemat hingga 70% data</li>
-                <li>Matikan autoplay</li>
-                <li>Download video saat ada WiFi untuk ditonton nanti</li>
+                <li>Video akan dimulai secara manual (hemat data)</li>
+                <li>Non-aktifkan autoplay untuk penghematan maksimal</li>
             </ul>
         </div>
 
@@ -58,72 +59,5 @@
     </div>
 
     <script src="js/app.js"></script>
-    
-    <!-- YouTube IFrame API -->
-    <script src="https://www.youtube.com/iframe_api"></script>
-</body>
-</html>            <div id="settings" class="tab-content">
-                <div class="settings-container">
-                    <h3>⚙️ Pengaturan Hemat Data</h3>
-                    
-                    <div class="setting-group">
-                        <label>Mode Hemat Data:</label>
-                        <select id="dataSaverMode" onchange="updateDataSaverSettings()">
-                            <option value="extreme">Ekstrem (Max Hemat)</option>
-                            <option value="high" selected>Tinggi</option>
-                            <option value="medium">Sedang</option>
-                            <option value="low">Rendah</option>
-                        </select>
-                    </div>
-
-                    <div class="setting-group">
-                        <label>Cache Size:</label>
-                        <span id="cacheSize">0 MB</span>
-                        <button onclick="clearCache()">Bersihkan Cache</button>
-                    </div>
-
-                    <div class="setting-group">
-                        <label>Block Autoplay Video:</label>
-                        <input type="checkbox" id="blockAutoplay" checked>
-                    </div>
-
-                    <div class="setting-group">
-                        <label>Kompresi Gambar:</label>
-                        <input type="checkbox" id="imageCompression" checked>
-                    </div>
-
-                    <div class="setting-group">
-                        <label>Limit Video Quality:</label>
-                        <input type="range" id="qualityLimit" min="144" max="1080" value="480">
-                        <span id="qualityValue">480p</span>
-                    </div>
-
-                    <div class="stats">
-                        <h4>📊 Statistik Penggunaan Data</h4>
-                        <p>Data Dihari Ini: <span id="dailyUsage">0 MB</span></p>
-                        <p>Total Data Disimpan: <span id="totalSaved">0 MB</span></p>
-                        <p>Cache Hit Rate: <span id="cacheRate">0%</span></p>
-                    </div>
-                </div>
-            </div>
-        </main>
-
-        <!-- Footer -->
-        <footer class="app-footer">
-            <div class="footer-stats">
-                <span id="dataUsage">Data digunakan: 0MB</span>
-                <span id="pageLoad">Load time: 0ms</span>
-            </div>
-        </footer>
-    </div>
-
-    <!-- Loading Spinner -->
-    <div id="loading" class="loading-spinner" style="display: none;">
-        <div class="spinner"></div>
-        <p>Memuat... <span id="loadPercent">0%</span></p>
-    </div>
-
-    <!-- JavaScript -->
-    <script src="app.js"></script>
 </body>
 </html>
