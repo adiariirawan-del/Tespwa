@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DataSaver Browser - YouTube & Google Hemat Data</title>
+    <meta name="theme-color" content="#2E7D32">
+    <meta name="description" content="Browser hemat data untuk YouTube dan Google">
+    
+    <!-- PWA Manifest -->
+    <link rel="manifest" href="manifest.json">
+    
+    <!-- iOS Support -->
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="default">
+    <link rel="apple-touch-icon" href="icons/icon-192x192.png">
+    
+    <!-- CSS -->
+    <link rel="stylesheet" href="style.css">
+    
+    <!-- Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <div class="app-container">
+        <!-- Header -->
+        <header class="app-header">
+            <div class="header-content">
+                <h1>🌐 DataSaver Browser</h1>
+                <div class="connection-info">
+                    <span id="dataSaverStatus" class="data-saver-badge">💾 Mode Hemat Data</span>
+                    <span id="networkStatus" class="network-status">📶 Online</span>
+                </div>
+            </div>
+        </header>
+
+        <!-- Tab Navigation -->
+        <nav class="tab-navigation">
+            <button class="tab-btn active" data-tab="youtube">
+                <i class="fab fa-youtube"></i> YouTube
+            </button>
+            <button class="tab-btn" data-tab="google">
+                <i class="fab fa-google"></i> Google
+            </button>
+            <button class="tab-btn" data-tab="settings">
+                <i class="fas fa-cog"></i> Settings
+            </button>
+        </nav>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <!-- YouTube Tab -->
+            <div id="youtube" class="tab-content active">
+                <div class="search-container">
+                    <div class="search-box">
+                        <input type="text" id="youtubeSearch" placeholder="Cari video YouTube..." 
+                               enterkeyhint="search">
+                        <button onclick="searchYouTube()">
+                            <i class="fas fa-search"></i>
+                        </button>
+                    </div>
+                    <div class="quality-selector">
+                        <label>Kualitas Video:</label>
+                        <select id="videoQuality" onchange="changeVideoQuality()">
+                            <option value="144p">144p (Paling Hemat)</option>
+                            <option value="240p">240p (Hemat)</option>
+                            <option value="360p" selected>360p (Seimbang)</option>
+                            <option value="480p">480p (Standar)</option>
+                            <option value="720p">720p (HD)</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="content-area">
+                    <div id="youtubeResults" class="results-container"></div>
+                    <div id="youtubePlayer" class="video-player" style="display: none;">
+                        <button onclick="closeVideo()" class="close-btn">
+                            <i class="fas fa-times"></i>
+                        </button>
+                        <div id="videoContainer"></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Google Tab -->
+            <div id="google" class="tab-content">
+                <div class="search-container">
+                    <div class="search-box">
+                        <input type="text" id="googleSearch" placeholder="Cari di Google..." 
+                               enterkeyhint="search">
+                        <button onclick="searchGoogle()">
+                            <i class="fas fa-search"></i>
+                        </button>
+                    </div>
+                    <div class="search-options">
+                        <label>
+                            <input type="checkbox" id="textOnlyMode" checked> Mode Teks Saja
+                        </label>
+                        <label>
+                            <input type="checkbox" id="imageLazyLoad" checked> Lazy Load Gambar
+                        </label>
+                    </div>
+                </div>
+
+                <div id="googleResults" class="results-container"></div>
+            </div>
+
+            <!-- Settings Tab -->
+            <div id="settings" class="tab-content">
+                <div class="settings-container">
+                    <h3>⚙️ Pengaturan Hemat Data</h3>
+                    
+                    <div class="setting-group">
+                        <label>Mode Hemat Data:</label>
+                        <select id="dataSaverMode" onchange="updateDataSaverSettings()">
+                            <option value="extreme">Ekstrem (Max Hemat)</option>
+                            <option value="high" selected>Tinggi</option>
+                            <option value="medium">Sedang</option>
+                            <option value="low">Rendah</option>
+                        </select>
+                    </div>
+
+                    <div class="setting-group">
+                        <label>Cache Size:</label>
+                        <span id="cacheSize">0 MB</span>
+                        <button onclick="clearCache()">Bersihkan Cache</button>
+                    </div>
+
+                    <div class="setting-group">
+                        <label>Block Autoplay Video:</label>
+                        <input type="checkbox" id="blockAutoplay" checked>
+                    </div>
+
+                    <div class="setting-group">
+                        <label>Kompresi Gambar:</label>
+                        <input type="checkbox" id="imageCompression" checked>
+                    </div>
+
+                    <div class="setting-group">
+                        <label>Limit Video Quality:</label>
+                        <input type="range" id="qualityLimit" min="144" max="1080" value="480">
+                        <span id="qualityValue">480p</span>
+                    </div>
+
+                    <div class="stats">
+                        <h4>📊 Statistik Penggunaan Data</h4>
+                        <p>Data Dihari Ini: <span id="dailyUsage">0 MB</span></p>
+                        <p>Total Data Disimpan: <span id="totalSaved">0 MB</span></p>
+                        <p>Cache Hit Rate: <span id="cacheRate">0%</span></p>
+                    </div>
+                </div>
+            </div>
+        </main>
+
+        <!-- Footer -->
+        <footer class="app-footer">
+            <div class="footer-stats">
+                <span id="dataUsage">Data digunakan: 0MB</span>
+                <span id="pageLoad">Load time: 0ms</span>
+            </div>
+        </footer>
+    </div>
+
+    <!-- Loading Spinner -->
+    <div id="loading" class="loading-spinner" style="display: none;">
+        <div class="spinner"></div>
+        <p>Memuat... <span id="loadPercent">0%</span></p>
+    </div>
+
+    <!-- JavaScript -->
+    <script src="app.js"></script>
+</body>
+</html>
