@@ -1,41 +1,30 @@
-const CACHE_NAME = 'youtube-pwa-v1';
-const urlsToCache = [
-    '/',
-    '/index.html',
-    '/css/style.css',
-    '/js/app.js',
-    '/icons/icon-192.png',
-    '/icons/icon-512.png',
-    'https://www.youtube.com/iframe_api'
-];
+// Alternatif sederhana: redirect ke YouTube dengan parameter hemat data
+function loadVideoAlternative() {
+    const url = document.getElementById('videoUrl').value.trim();
+    const videoId = extractYouTubeId(url);
+    
+    if (!videoId) {
+        alert('Link YouTube tidak valid!');
+        return;
+    }
+    
+    // Redirect ke YouTube dengan parameter hemat data
+    const youtubeUrl = `https://www.youtube.com/watch?v=${videoId}`;
+    
+    // Buka di tab baru atau embed
+    const shouldEmbed = confirm('Buka video dalam mode embed (hemat data) atau tab baru? Klik OK untuk embed, Cancel untuk tab baru.');
+    
+    if (shouldEmbed) {
+        showVideoPlayer(videoId);
+        document.getElementById('playerContainer').classList.remove('hidden');
+    } else {
+        window.open(youtubeUrl, '_blank');
+    }
+}
 
-self.addEventListener('install', (event) => {
-    event.waitUntil(
-        caches.open(CACHE_NAME)
-            .then((cache) => cache.addAll(urlsToCache))
-    );
-});
-
-self.addEventListener('fetch', (event) => {
-    event.respondWith(
-        caches.match(event.request)
-            .then((response) => {
-                // Return cached version or fetch from network
-                return response || fetch(event.request);
-            })
-    );
-});
-
-self.addEventListener('activate', (event) => {
-    event.waitUntil(
-        caches.keys().then((cacheNames) => {
-            return Promise.all(
-                cacheNames.map((cacheName) => {
-                    if (cacheName !== CACHE_NAME) {
-                        return caches.delete(cacheName);
-                    }
-                })
-            );
-        })
-    );
-});
+// Fungsi extractYouTubeId tetap sama
+function extractYouTubeId(url) {
+    const regExp = /^.*((youtu.be\/)|(v\/)|(\/u\/\w\/)|(embed\/)|(watch\?))\??v?=?([^#&?]*).*/;
+    const match = url.match(regExp);
+    return (match && match[7].length === 11) ? match[7] : null;
+}
