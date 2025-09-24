@@ -1,112 +1,123 @@
-class DataSaverBrowser {
-    constructor() {
-        this.currentTab = 'youtube';
-        this.dataUsage = 0;
-        this.cacheHits = 0;
-        this.cacheMisses = 0;
-        this.init();
-    }
+let player;
+let currentVideoId = '';
+let dataSaverMode = true;
 
-    init() {
-        this.setupEventListeners();
-        this.loadSettings();
-        this.registerServiceWorker();
-        this.setupNetworkMonitoring();
-        this.updateStats();
-    }
+// YouTube Player API
+function onYouTubeIframeAPIReady() {
+    player = new YT.Player('player', {
+        height: '400',
+        width: '100%',
+        playerVars: {
+            'playsinline': 1,
+            'modestbranding': 1,
+            'rel': 0
+        },
+        events: {
+            'onReady': onPlayerReady,
+            'onStateChange': onPlayerStateChange
+        }
+    });
+}
 
-    setupEventListeners() {
-        // Tab switching
-        document.querySelectorAll('.tab-btn').forEach(btn => {
-            btn.addEventListener('click', (e) => {
-                this.switchTab(e.target.getAttribute('data-tab'));
+function onPlayerReady(event) {
+    console.log('Player siap!');
+    applyQualitySettings();
+}
+
+function onPlayerStateChange(event) {
+    // Bisa ditambahkan fitur tambahan di sini
+}
+
+function loadVideo() {
+    const url = document.getElementById('videoUrl').value.trim();
+    const videoId = extractYouTubeId(url);
+    
+    if (!videoId) {
+        alert('❌ Link YouTube tidak valid!');
+        return;
+    }
+    
+    currentVideoId = videoId;
+    
+    if (!player) {
+        alert('Player belum siap. Tunggu sebentar...');
+        return;
+    }
+    
+    player.loadVideoById(videoId);
+    document.getElementById('playerContainer').classList.remove('hidden');
+    
+    // Simulasi dapat judul video (dalam real implementation butuh YouTube API key)
+    document.getElementById('videoTitle').textContent = 'Video YouTube - Mode Hemat Data';
+}
+
+function extractYouTubeId(url) {
+    const regExp = /^.*((youtu.be\/)|(v\/)|(\/u\/\w\/)|(embed\/)|(watch\?))\??v?=?([^#&?]*).*/;
+    const match = url.match(regExp);
+    return (match && match[7].length === 11) ? match[7] : null;
+}
+
+function applyQualitySettings() {
+    if (!player || !currentVideoId) return;
+    
+    const quality = document.getElementById('quality').value;
+    
+    // Dalam implementasi nyata, butuh YouTube API untuk set quality
+    console.log('Mengatur kualitas:', quality);
+    
+    // Untuk sekarang, kita set parameter default hemat data
+    player.setPlaybackQuality('small');
+}
+
+function toggleDataSaver() {
+    dataSaverMode = !dataSaverMode;
+    const btn = document.getElementById('dataSaverBtn');
+    const modeText = document.getElementById('dataMode');
+    
+    if (dataSaverMode) {
+        btn.textContent = 'Hemat Data: ON';
+        btn.classList.remove('off');
+        modeText.textContent = 'Aktif';
+        // Set kualitas terendah
+        document.getElementById('quality').value = '144p';
+    } else {
+        btn.textContent = 'Hemat Data: OFF';
+        btn.classList.add('off');
+        modeText.textContent = 'Tidak Aktif';
+    }
+    
+    applyQualitySettings();
+}
+
+// Event Listeners
+document.getElementById('videoUrl').addEventListener('keypress', function(e) {
+    if (e.key === 'Enter') loadVideo();
+});
+
+document.getElementById('quality').addEventListener('change', applyQualitySettings);
+
+// PWA Installation
+let deferredPrompt;
+window.addEventListener('beforeinstallprompt', (e) => {
+    e.preventDefault();
+    deferredPrompt = e;
+    
+    // Bisa tambahkan button install di sini
+    console.log('PWA siap diinstall!');
+});
+
+// Service Worker Registration
+if ('serviceWorker' in navigator) {
+    window.addEventListener('load', () => {
+        navigator.serviceWorker.register('/sw.js')
+            .then((registration) => {
+                console.log('SW registered: ', registration);
+            })
+            .catch((registrationError) => {
+                console.log('SW registration failed: ', registrationError);
             });
-        });
-
-        // Enter key for search
-        document.getElementById('youtubeSearch').addEventListener('keypress', (e) => {
-            if (e.key === 'Enter') this.searchYouTube();
-        });
-
-        document.getElementById('googleSearch').addEventListener('keypress', (e) => {
-            if (e.key === 'Enter') this.searchGoogle();
-        });
-
-        // Network status
-        window.addEventListener('online', () => this.updateNetworkStatus(true));
-        window.addEventListener('offline', () => this.updateNetworkStatus(false));
-    }
-
-    switchTab(tabName) {
-        // Update active tab button
-        document.querySelectorAll('.tab-btn').forEach(btn => {
-            btn.classList.remove('active');
-        });
-        document.querySelector(`[data-tab="${tabName}"]`).classList.add('active');
-
-        // Update active tab content
-        document.querySelectorAll('.tab-content').forEach(content => {
-            content.classList.remove('active');
-        });
-        document.getElementById(tabName).classList.add('active');
-
-        this.currentTab = tabName;
-    }
-
-    async searchYouTube() {
-        const query = document.getElementById('youtubeSearch').value.trim();
-        if (!query) return;
-
-        this.showLoading(true);
-        
-        try {
-            // Use YouTube Data API with data saving techniques
-            const results = await this.fetchYouTubeData(query);
-            this.displayYouTubeResults(results);
-        } catch (error) {
-            this.showError('Gagal memuat hasil pencarian YouTube');
-        } finally {
-            this.showLoading(false);
-        }
-    }
-
-    async fetchYouTubeData(query) {
-        // Simulate YouTube API call with data optimization
-        const cacheKey = `youtube_${query}`;
-        const cached = this.getCachedData(cacheKey);
-        
-        if (cached) {
-            this.cacheHits++;
-            return cached;
-        }
-
-        this.cacheMisses++;
-        
-        // Simulate API response (in real app, use YouTube Data API)
-        const simulatedResults = this.simulateYouTubeResults(query);
-        
-        // Cache the results
-        this.cacheData(cacheKey, simulatedResults, 300000); // 5 minutes
-        
-        // Simulate network delay
-        await new Promise(resolve => setTimeout(resolve, 500));
-        
-        return simulatedResults;
-    }
-
-    simulateYouTubeResults(query) {
-        // Simulate YouTube search results with optimized data
-        return Array.from({length: 10}, (_, i) => ({
-            id: `video_${i}`,
-            title: `${query} - Video ${i + 1}`,
-            channel: `Channel ${i + 1}`,
-            thumbnail: this.generateLowResThumbnail(),
-            duration: `${Math.floor(Math.random() * 10) + 1}:${Math.floor(Math.random() * 60).toString().padStart(2, '0')}`,
-            views: `${(Math.random() * 1000).toFixed(0)}K ditonton`
-        }));
-    }
-
-    generateLowResThumbnail() {
+    });
+}    generateLowResThumbnail() {
         // Return low-resolution thumbnail URL or data URI
         const colors = ['FF6B6B', '4ECDC4', '45B7D1', '96CEB4', 'FFEAA7'];
         const color = colors[Math.floor(Math.random() * colors.length)];
