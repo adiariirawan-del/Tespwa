@@ -1,63 +1,23 @@
 <!DOCTYPE html>
-<html lang="id">
+<html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>YouTube Hemat Data</title>
-    <meta name="theme-color" content="#ff0000">
-    <link rel="manifest" href="manifest.json">
-    <link rel="stylesheet" href="css/style.css">
-    <link rel="icon" type="image/png" href="icons/icon-192.png">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Offline Video PWA</title>
+  <link rel="stylesheet" href="style.css" />
+  <link rel="manifest" href="manifest.json">
 </head>
 <body>
-    <div class="container">
-        <header class="header">
-            <h1>🎥 YouTube Hemat Data</h1>
-            <p>Nikmati video YouTube dengan kuota lebih irit</p>
-        </header>
+  <h1>🎥 Offline Video Player</h1>
+  
+  <input type="file" id="videoInput" accept="video/*">
+  <button id="saveBtn">💾 Simpan Video</button>
+  
+  <h3>Video Tersimpan</h3>
+  <ul id="videoList"></ul>
 
-        <div class="search-container">
-            <input type="text" id="videoUrl" placeholder="Tempel link YouTube di sini..." autofocus>
-            <button onclick="loadVideo()">📺 Putar Video</button>
-        </div>
+  <video id="player" controls width="300"></video>
 
-        <div class="quality-selector">
-            <label>Kualitas Video:</label>
-            <select id="quality" onchange="changeQuality()">
-                <option value="144">144p (Paling Hemat)</option>
-                <option value="240">240p (Hemat)</option>
-                <option value="360" selected>360p (Standar)</option>
-                <option value="480">480p (Sedang)</option>
-                <option value="720">720p (HD)</option>
-            </select>
-        </div>
-
-        <div id="playerContainer" class="player-container hidden">
-            <!-- Gunakan iframe langsung tanpa API kompleks -->
-            <div id="videoFrame"></div>
-            <div class="video-info">
-                <h3 id="videoTitle">Video YouTube</h3>
-                <div class="data-saving">
-                    <span>💾 Mode Hemat Data: <span id="dataMode">Aktif</span></span>
-                    <button onclick="toggleDataSaver()" id="dataSaverBtn">Hemat Data: ON</button>
-                </div>
-            </div>
-        </div>
-
-        <div class="tips">
-            <h3>💡 Tips Hemat Data:</h3>
-            <ul>
-                <li>Gunakan kualitas 144p/240p untuk menghemat hingga 70% data</li>
-                <li>Video akan dimulai secara manual (hemat data)</li>
-                <li>Non-aktifkan autoplay untuk penghematan maksimal</li>
-            </ul>
-        </div>
-
-        <footer>
-            <p>⚡ PWA by GitHub + Netlify | ❤️ Open Source</p>
-        </footer>
-    </div>
-
-    <script src="js/app.js"></script>
+  <script src="app.js"></script>
 </body>
 </html>
